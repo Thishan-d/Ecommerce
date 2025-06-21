@@ -1,12 +1,18 @@
-import { useState } from "react";
-import NavBar from "./NavBar";
+
 import "./App.css";
+// import NavBar from "./NavBar";
+// import ThemeSelector from "./ThemeSelector";
+// import Drawer from "./Drawer";
+// import TestComponent from "./TestComponent";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./Routes/AppRoutes";
 
 function App() {
   return (
     <>
-      <NavBar />
-      <h1 className="text-3xl font-bold underline">Hello world!!</h1>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
     </>
   );
 }
