@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "../Layouts/MainLayout";
 import AdminLayout from "../Layouts/AdminLayout";
-import ProductDetail from "../Pages/User/ProductDetail";
 
 import Home from "../Pages/User/Home";
 import AddProduct from "../Pages/Admin/AddProduct";
+import ProductPage from "../Pages/User/ProductPage";
 // import Login from "../pages/auth/Login";
 // import About from "../pages/About";
 // import NotFound from "../pages/NotFound";
@@ -17,7 +17,7 @@ const AppRoutes = () => (
     <Route element={<MainLayout />}>
 
        <Route path="/" element={<Home />} />
-      <Route path="/productDetail" element={<ProductDetail />} />
+      <Route path="/productDetail" element={<ProductPage />} />
       {/* <Route path="/cart" element={<Cart />} />
       <Route path="/payment" element={<Payment />} /> */}
 
