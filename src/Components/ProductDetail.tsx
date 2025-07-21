@@ -1,17 +1,6 @@
 import { useState, useEffect } from "react";
 import altProductImage from "../assets/AltProductDetailImage.jpg";
-
-type ProductDetailProps = {
-  title: string;
-  description: string;
-  actualPrice: number;
-  fakePrice?: number;
-  reviewCount?: number;
-  rating: number;
-  images: string[];
-  productQuantity: number;
-  colors?: string[];
-};
+import type { ProductDetailProps } from "../Services/types";
 
 const ProductDetail = ({
   title,

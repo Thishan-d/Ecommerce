@@ -1,5 +1,8 @@
 import { useState } from "react";
 import ProductDetail from "../../Components/ProductDetail";
+import type { ProductDetailProps } from "../../Services/types";
+import { addProduct, handleImageUploadToServer } from "../../Services/uploadImages";
+
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -10,12 +13,13 @@ const ProductForm = () => {
     actualPrice: "",
     fakePrice: "",
     colors: [] as string[],
-    images: [] as string[],
+    images: [] as File[],
+    outsourcedImageUrls: [] as string[],
   });
 
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-
   const [viewColorPicker, setColorPicker] = useState<boolean>(false);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadImages, setUploadImages] = useState<boolean>(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -46,19 +50,57 @@ const ProductForm = () => {
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setFormData({ ...formData, images: previews });
-
-    // const previews = files.map((file) => URL.createObjectURL(file));
-    // setImagePreviews(previews);
+    
+    if(uploadImages){
+      const files = Array.from(e.target.files || []);
+      setFormData({ ...formData, images: files });
+      const previews = files.map((file) => URL.createObjectURL(file));
+      setImagePreviews(previews);
+    }
+    else {
+      setFormData({ ...formData, outsourcedImageUrls: imagePreviews });
+      setImagePreviews(imagePreviews);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form data:", formData);
 
-    // When integrating with Firebase, upload `formData.images` to Storage here
+  const handleImageUrls = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const urls = e.target.value.split(",").map((url) => url.trim());
+    setImagePreviews(urls);
+    setFormData({ ...formData, images: [], outsourcedImageUrls: urls }); // Set outsourcedImageUrls and clear local images
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    let uploadedImageUrls: string[] = [];
+    if(uploadImages){
+       uploadedImageUrls = await handleImageUploadToServer(formData.images);
+    }
+    else {
+      uploadedImageUrls = formData.outsourcedImageUrls;
+      console.log("uploadedImageUrls:", uploadedImageUrls);
+      console.log("formData.outsourcedImageUrls:", formData.outsourcedImageUrls);
+    }
+
+    const newProduct: ProductDetailProps = {
+      title: formData.title,
+      description: formData.description,
+      rating: formData.rating ? parseFloat(formData.rating) : 0,
+      quantity: formData.quantity,
+      actualPrice: parseFloat(formData.actualPrice),
+      fakePrice: parseFloat(formData.fakePrice),
+      images: uploadedImageUrls,
+      productQuantity: formData.quantity,
+      colors: formData.colors,
+    };
+
+    try {
+      await addProduct(newProduct);
+      alert("Product added successfully!");
+    } catch (error) {
+      console.error("Failed to add product:", error);
+      alert("Something went wrong while adding the product.");
+    }
   };
 
   return (
@@ -99,15 +141,32 @@ const ProductForm = () => {
 
             {/* Multiple Local Image Upload */}
             <div>
-              <label className="block font-medium mb-1">Product Images *</label>
-              <input
+              <div className="flex justify-between items-center mb-1">
+                <label className="font-medium">Product Images *</label>
+                <label className="label cursor-pointer">
+                  <span className="label-text mr-2">Use server</span>
+                  <input type="checkbox" className="checkbox" onChange={() => {
+                    setUploadImages(!uploadImages);
+                    setFormData({ ...formData, images: [], outsourcedImageUrls: [] });
+                    setImagePreviews([]);
+                  }}/>
+                </label>
+              </div>
+
+              {uploadImages === true ? (<input
                 type="file"
                 accept="image/*"
                 multiple
-                required
                 onChange={handleImageUpload}
                 className="file-input file-input-bordered w-full"
+              />) : (
+              <input
+                type="text"
+                name="images"
+                onChange={handleImageUrls}
+                className="w-full border border-gray-300 rounded px-3 py-2"
               />
+              )}
             </div>
 
             <div>
@@ -146,6 +205,7 @@ const ProductForm = () => {
                 type="number"
                 name="actualPrice"
                 min={0}
+                step="0.01"
                 value={formData.actualPrice}
                 onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded px-3 py-2"
@@ -158,6 +218,7 @@ const ProductForm = () => {
                 type="number"
                 name="fakePrice"
                 min={0}
+                step="0.01"
                 value={formData.fakePrice}
                 onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded px-3 py-2"
@@ -224,7 +285,8 @@ const ProductForm = () => {
             }
             fakePrice={formData.fakePrice ? parseFloat(formData.fakePrice) : 0}
             colors={formData.colors}
-            images={formData.images}
+            images={imagePreviews}
+            quantity={formData.quantity}
           />
         </div>
       </div>
