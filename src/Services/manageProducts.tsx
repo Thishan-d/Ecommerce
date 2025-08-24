@@ -1,7 +1,7 @@
-import { storage, db } from "../../src/Firebase/firebaseConfig";
+import { storage, db } from "../Firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
-import type { ProductDetailProps } from "../Services/types";
+import type { ProductDetailProps } from "./types";
 
 const productRef = collection(db, "products");
 
@@ -33,7 +33,7 @@ export const handleImageUploadToServer = async (files: File[]): Promise<string[]
 
 
 
-export const addProduct = async (product: ProductDetailProps) => {
+export const createProduct = async (product: ProductDetailProps) => {
   try {
     const cleanObject = JSON.parse(JSON.stringify(product));
     console.log("cleanObject",cleanObject);

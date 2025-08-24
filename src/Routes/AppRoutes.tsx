@@ -3,7 +3,7 @@ import MainLayout from "../Layouts/MainLayout";
 import AdminLayout from "../Layouts/AdminLayout";
 
 import Home from "../Pages/User/Home";
-import AddProduct from "../Pages/Admin/AddProduct";
+import CreateProduct from "../Pages/Admin/CreateProduct";
 import ProductPage from "../Pages/User/ProductPage";
 import CategoryDetails from "../Components/CategoryDetails";
 // import Login from "../pages/auth/Login";
@@ -29,7 +29,7 @@ const AppRoutes = () => (
     <Route path="/register" element={<Register />} /> */}
 
     <Route path="/admin" element={<AdminLayout />}>
-    <Route path="addProduct" element={<AddProduct />} />
+    <Route path="createProduct" element={<CreateProduct />} />
     <Route path="categoryDetails" element={<CategoryDetails />} />
       {/* <Route path="products" element={<ManageProducts />} />
       <Route path="dashboard" element={<Dashboard />} />

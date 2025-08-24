@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductDetail from "../../Components/ProductDetail";
-import type { ProductDetailProps } from "../../Services/types";
-import { addProduct, handleImageUploadToServer } from "../../Services/uploadImages";
+import type { ProductDetailProps, Category } from "../../Services/types";
+import { createProduct, handleImageUploadToServer } from "../../Services/manageProducts";
+import { getAllCategories } from "../../Services/manageCategories";
 
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    category: "",
     rating: "4.5",
     quantity: 1,
     actualPrice: "",
@@ -20,6 +22,15 @@ const ProductForm = () => {
   const [viewColorPicker, setColorPicker] = useState<boolean>(false);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploadImages, setUploadImages] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const allCategories = await getAllCategories();
+      setCategories(allCategories || []);
+    };
+    fetchCategories();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -85,6 +96,7 @@ const ProductForm = () => {
     const newProduct: ProductDetailProps = {
       title: formData.title,
       description: formData.description,
+      category: formData.category,
       rating: formData.rating ? parseFloat(formData.rating) : 0,
       quantity: formData.quantity,
       actualPrice: parseFloat(formData.actualPrice),
@@ -95,7 +107,7 @@ const ProductForm = () => {
     };
 
     try {
-      await addProduct(newProduct);
+      await createProduct(newProduct);
       alert("Product added successfully!");
     } catch (error) {
       console.error("Failed to add product:", error);
@@ -167,6 +179,23 @@ const ProductForm = () => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
               />
               )}
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Category *</label>
+              <select
+                name="category"
+                required
+                value={formData.category}
+                onChange={handleInputChange}
+                className="select"
+              >
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -278,6 +307,7 @@ const ProductForm = () => {
           <ProductDetail
             title={formData.title}
             description={formData.description}
+            category={formData.category}
             rating={parseFloat(formData.rating)}
             productQuantity={formData.quantity}
             actualPrice={

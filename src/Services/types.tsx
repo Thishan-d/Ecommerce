@@ -3,6 +3,7 @@ export type ProductDetailProps = {
   description: string;
   actualPrice: number;
   fakePrice?: number;
+  category: string;
   reviewCount?: number;
   quantity: number;
   rating: number;
