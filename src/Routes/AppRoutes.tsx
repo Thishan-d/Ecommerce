@@ -5,6 +5,7 @@ import AdminLayout from "../Layouts/AdminLayout";
 import Home from "../Pages/User/Home";
 import AddProduct from "../Pages/Admin/AddProduct";
 import ProductPage from "../Pages/User/ProductPage";
+import CategoryDetails from "../Components/CategoryDetails";
 // import Login from "../pages/auth/Login";
 // import About from "../pages/About";
 // import NotFound from "../pages/NotFound";
@@ -29,6 +30,7 @@ const AppRoutes = () => (
 
     <Route path="/admin" element={<AdminLayout />}>
     <Route path="addProduct" element={<AddProduct />} />
+    <Route path="categoryDetails" element={<CategoryDetails />} />
       {/* <Route path="products" element={<ManageProducts />} />
       <Route path="dashboard" element={<Dashboard />} />
       <Route path="edit/:id" element={<EditProduct />} /> */}

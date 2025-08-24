@@ -10,3 +10,8 @@ export type ProductDetailProps = {
   productQuantity: number;
   colors?: string[];
 };
+
+export type Category = {
+  id: string;
+  name: string;
+};
